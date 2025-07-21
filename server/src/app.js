@@ -7,18 +7,18 @@ import cookieParser from "cookie-parser";
 import cors from "cors"; // Se agrego esto para usarse en la parte del frontend
 
 
-import { connectDB } from "./db.js";
+//import { connectDB } from "./db.js";
 import authRoutes from "./routes/auth.routes.js";
 import loteRoutes from './routes/lote.routes.js';  
 import policyRoutes from './routes/policy.routes.js';
-
+import userRoutes from './routes/user.routes.js';// gestion de usuarios 
 
 const app = express();
 
 //HABILITAR CORS para apps móviles
 app.use(
   cors({
-    origin: "http://localhost:8081", // origen de tu frontend en desarrollo
+    origin: "exp://192.168.173.217:8081",// url de desarrollo 
     credentials: true,
   })
 );
@@ -30,12 +30,14 @@ app.use(express.json());
 
 app.use(cookieParser());
 
-connectDB();
+//connectDB();
 
 app.use("/api", authRoutes);
 
 app.use("/api",loteRoutes);
 
 app.use('/api', policyRoutes);
+
+app.use('/api', userRoutes);
 
 export default app;

@@ -8,10 +8,10 @@ export default function Register() {
 
   return (
     <View style={styles.container}>
-      {/* Botón de regreso con estilo café y cuadrado */}
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={22} color="#D68D3B" />
-        </TouchableOpacity>
+      {/* Botón de regreso */}
+      <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+        <Ionicons name="arrow-back" size={22} color="#D68D3B" />
+      </TouchableOpacity>
 
       {/* Título */}
       <Text style={styles.header}>¿Cómo deseas registrarte?</Text>
@@ -22,7 +22,7 @@ export default function Register() {
           {/* Opción Granja */}
           <TouchableOpacity
             style={styles.optionCard}
-            onPress={() => router.push('/register_granja')}
+            onPress={() => router.push('/auth/register_granja')}
           >
             <Ionicons name="home" size={64} color="#000" />
             <Text style={styles.optionText}>Granja</Text>
@@ -31,7 +31,7 @@ export default function Register() {
           {/* Opción Cliente */}
           <TouchableOpacity
             style={styles.optionCard}
-            onPress={() => router.push('/register_cliente')}
+            onPress={() => router.push('/auth/register_cliente')}
           >
             <Ionicons name="person" size={64} color="#000" />
             <Text style={styles.optionText}>Cliente</Text>
@@ -50,26 +50,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     position: 'relative',
   },
-   backButton: {
-  position: 'absolute',
-  top: 48,
-  left: 20,
-  padding: 8,
-  zIndex: 1,
-},
-  backButtonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#D68D3B',
-    textAlign: 'center',
+  backButton: {
+    position: 'absolute',
+    top: 48,
+    left: 20,
+    padding: 8,
+    zIndex: 1,
   },
-  
   header: {
     fontSize: 28,
     fontWeight: '600',
     textAlign: 'center',
     marginTop: 120,
-    marginBottom: -190,
+    marginBottom: -190,  // tal como tu diseño original
   },
   optionsWrapper: {
     flex: 1,
@@ -78,7 +71,7 @@ const styles = StyleSheet.create({
   },
   optionsContainer: {
     flexDirection: 'row',
-    gap: 32,
+    gap: 32,               // mantiene el espacio entre tarjetas
   },
   optionCard: {
     borderWidth: 1,

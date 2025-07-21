@@ -22,11 +22,28 @@ const userSchema = new mongoose.Schema(
 
     role: {
       type: String,
-      enum: ["cliente", "productor"],
+      enum: ["cliente", "productor", "admin"],
       required: true,
     },
+
+    avatar: String, // Nuevo campo para la gestion de la imagenes 
+
+    // email verification
+    emailVerified: {
+      type: Boolean,
+      default: false,
+    },
+    emailVerificationToken: String,
+    emailVerificationExpires: Date,
+
+    // Campos para la recuperación de contraseña
+    resetPasswordToken: String,
+    resetPasswordExpires: Date,
   },
-  { timestamps: true }
+
+  {
+    timestamps: true,
+  }
 );
 
 export default mongoose.model("User", userSchema);

@@ -1,6 +1,6 @@
-import QRCode from 'qrcode';
-import Lote from '../models/lote.model.js';
-import { loteSchema } from '../schemas/lote.schema.js';
+import QRCode from "qrcode";
+import Lote from "../models/lote.model.js";
+import { loteSchema } from "../schemas/lote.schema.js";
 
 export const crearLote = async (req, res) => {
   // Extrae todos los campos del body
@@ -36,7 +36,10 @@ export const crearLote = async (req, res) => {
   });
   if (!parsed.success) {
     // Si falla validación, 400 con errores
-    return res.status(400).json({ errors: parsed.error.flatten() });
+    //return res.status(400).json({ errors: parsed.error.flatten() });
+    const { fieldErrors } = parsed.error.flatten();
+    const msg = Object.values(fieldErrors).flat()[0];
+    return res.status(400).json({ message: msg });
   }
 
   try {
@@ -44,8 +47,8 @@ export const crearLote = async (req, res) => {
     const nuevoLote = new Lote({
       ...parsed.data,
       fechaRecoleccion: new Date(parsed.data.fechaRecoleccion),
-      fechaEmpaque:     new Date(parsed.data.fechaEmpaque),
-      fechaSalida:      new Date(parsed.data.fechaSalida),
+      fechaEmpaque: new Date(parsed.data.fechaEmpaque),
+      fechaSalida: new Date(parsed.data.fechaSalida),
     });
     const loteGuardado = await nuevoLote.save();
 
@@ -82,5 +85,39 @@ export const crearLote = async (req, res) => {
     // En caso de error interno, 500 con mensaje
     console.error(error);
     return res.status(500).json({ message: error.message });
+  }
+};
+
+// Función para mostrar los lotes de cada productor
+/*
+export const obtenerMisLotes = async (req, res) => {
+  try {
+    const productorId = req.user.id;
+    const lotes = await Lote.find({ productorId }).sort({ createdAt: -1 });
+    return res.json(lotes);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: error.message });
+  }
+};
+*/
+export const listarLotes = async (req, res) => {
+  try {
+    const lotes = await Lote.find({ productorId: req.user.id });
+    return res.json(lotes);
+  } catch(err) {
+    console.error(err);
+    return res.status(500).json({ message: 'Error listando lotes' });
+  }
+};
+
+export const obtenerLote = async (req, res) => {
+  try {
+    const lote = await Lote.findById(req.params.id);
+    if (!lote) return res.status(404).json({ message: 'Lote no encontrado' });
+    return res.json(lote);
+  } catch(err) {
+    console.error(err);
+    return res.status(500).json({ message: 'Error obteniendo lote' });
   }
 };

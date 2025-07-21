@@ -4,51 +4,94 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const TOKEN_KEY = "token";
 
-// Login
-export const loginRequest = async (email: string, password: string) => {
-  console.log("📡 loginRequest ejecutándose...");
+/**
+ * Inicia sesión con email y contraseña.
+ * Almacena el token devuelto en AsyncStorage.
+ *
+ * @param email - Correo del usuario
+ * @param password - Contraseña del usuario
+ * @returns Los datos de la respuesta (incluyendo token)
+ */
+export const loginRequest = async (
+  email: string,
+  password: string
+): Promise<any> => {
+  console.log("📡 loginRequest =>", { email, password });
   const res = await api.post("/login", { email, password });
+  console.log("🔑 loginResponse =>", res.status, res.data);
+
   const token: string | undefined = res.data.token;
   if (token) {
     await AsyncStorage.setItem(TOKEN_KEY, token);
     console.log("Token guardado en AsyncStorage");
   }
+
   return res.data;
 };
 
-// Registro
+/**
+ * Registra un nuevo usuario (cliente o granja).
+ * No guarda token automáticamente (descomenta si tu API lo devuelve).
+ *
+ * @param username - Nombre del usuario o razón social
+ * @param email - Correo del usuario
+ * @param password - Contraseña deseada
+ * @param role - "cliente" o "granja"
+ * @returns Los datos de la respuesta
+ */
 export const registerRequest = async (
   username: string,
   email: string,
-  password: string
-) => {
-  console.log("📡 registerRequest ejecutándose...");
-  const res = await api.post("/register", { username, email, password });
-  const token: string | undefined = res.data.token;
-  if (token) {
-    await AsyncStorage.setItem(TOKEN_KEY, token);
-    console.log("Token guardado en AsyncStorage");
-  }
+  password: string,
+  role: "cliente" | "productor"
+): Promise<any> => {
+  console.log(" registerRequest =>", { username, email, role });
+  // elegimos la ruta adecuada
+  const endpoint = role === "productor"
+    ? "/register/productor"
+    : "/register/cliente";
+  
+    const res = await api.post(endpoint, {
+    username,
+    email,
+    password,
+    // ya no es necesario enviar role aquí porque la ruta lo asigna
+  });
+
+  console.log(" registerResponse =>", res.status, res.data);
+
+
   return res.data;
 };
 
-// Obtener perfil (usa el interceptor para añadir el token)
-export const getProfile = async () => {
-  // Si quieres validar antes de la llamada:
-  // const token = await AsyncStorage.getItem(TOKEN_KEY);
-  // if (!token) throw new Error("Token no encontrado");
+/**
+ * Obtiene el perfil del usuario autenticado.
+ * Usa el interceptor para añadir el token al header.
+ *
+ * @returns Los datos de perfil
+ */
+export const getProfile = async (): Promise<any> => {
+  console.log(" getProfile => llamando a /profile");
   const res = await api.get("/profile");
+  console.log(" profileResponse =>", res.status, res.data);
   return res.data;
 };
 
-// Logout
-export const logoutRequest = async () => {
-  console.log("🔒 logoutRequest ejecutándose...");
+/**
+ * Cierra sesión:
+ * - Elimina el token local
+ * - Notifica al backend
+ */
+export const logoutRequest = async (): Promise<void> => {
+  console.log(" logoutRequest => eliminando token local");
   await AsyncStorage.removeItem(TOKEN_KEY);
   try {
-    await api.post("/logout");
-    console.log("Notificado al backend y token eliminado");
+    const res = await api.post("/logout");
+    console.log(" logoutResponse =>", res.status);
   } catch (err) {
-    console.warn("Error notificando logout al backend, pero el token ya se eliminó");
+    console.warn(
+      "⚠️ logoutRequest aviso: error notificando al backend, token ya eliminado",
+      err
+    );
   }
 };

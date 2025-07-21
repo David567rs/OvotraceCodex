@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { createAdmin } from "./libs/createAdmin.js";
 
 export const connectDB = async () => {
   try {
@@ -7,6 +8,7 @@ export const connectDB = async () => {
       "mongodb://localhost/ovotrace"
     );
     console.log("DB conectado");
+    await createAdmin();
   } catch (error) {
     console.log(error);
     process.exit(1);

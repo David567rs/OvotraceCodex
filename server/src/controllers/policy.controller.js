@@ -1,4 +1,4 @@
-import Policy from '../models/policy.model.js';
+import Policy from "../models/policy.model.js";
 
 export const getPolicies = async (req, res) => {
   const policies = await Policy.find();
@@ -21,5 +21,5 @@ export const updatePolicy = async (req, res) => {
 export const deletePolicy = async (req, res) => {
   const { id } = req.params;
   await Policy.findByIdAndDelete(id);
-  res.json({ message: 'Política eliminada correctamente' });
+  res.json({ message: "Política eliminada correctamente" });
 };

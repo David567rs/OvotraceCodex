@@ -26,7 +26,18 @@ const LoginScreen = () => {
     try {
       const data = await loginRequest(email, password);
       Alert.alert('Éxito', `Bienvenido ${data.username}`);
-      router.push('/(tabs)'); // Redirige a tu pantalla principal
+      //router.push('/(tabs)'); // Redirige a tu pantalla principal
+
+      // ****************** Nuevo esto para redirigir a los tabs de acuerdo a los roles *******************
+      if (data.role === 'productor') {
+        router.replace('/(Productor)');
+      } else if (data.role === 'cliente') {
+        router.replace('/(Cliente)');
+      } else {
+        router.replace('/(Admin)');
+      } 
+      // ***********************************************************************************************
+
     } catch (error: any) {
       const msg = error?.response?.data?.message || 'Error al iniciar sesión';
       Alert.alert('Error', msg);
@@ -104,7 +115,7 @@ const LoginScreen = () => {
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity onPress={() => router.push('/forgot-password')}>
+          <TouchableOpacity onPress={() => router.push('/auth/forgot-password')}> 
             <Text style={styles.forgotText}>¿Olvidaste la contraseña?</Text>
           </TouchableOpacity>
         </View>
